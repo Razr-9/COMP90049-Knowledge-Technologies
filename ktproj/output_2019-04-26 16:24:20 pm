@@ -1,0 +1,7 @@
+MisMatch: [ozil, opolo, u, cantik, avedon, didnt, brah]
+Matched: 23
+total correct: 30
+total returned: 42
+Precision: 0.54761904
+Recall: 0.76666665
+time cost: 15025ms

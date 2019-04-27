@@ -1,0 +1,7 @@
+MisMatch: [ozil, ozil, ozil, ozil, ozil, opolo, opolo, u, cantik, cantik, cantik, avedon, avedon, avedon, avedon, didnt, brah, brah, brah]
+Matched: 23
+total correct: 30
+total returned: 42
+Precision: 0.54761904
+Recall: 0.76666665
+time cost: 15202ms

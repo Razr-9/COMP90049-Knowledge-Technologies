@@ -1,0 +1,7 @@
+MisMatch: [ozil, opolo, u, cantik, avedon, didnt, brah, syempre, hahaha, bria, exo, luhan, chanyeol, sehun, cause, blog, you've, nba, investissement, murs, ight]
+Matched: 79
+total correct: 100
+total returned: 155
+Precision: 0.5096774
+Recall: 0.79
+time cost: 48472ms
