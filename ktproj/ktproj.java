@@ -95,8 +95,7 @@ public class ktproj {
                 
             }
         }
-        return F[lq][lt];
-                
+        return F[lq][lt];   
     }
 
     // public static String Soundex(String input) {
