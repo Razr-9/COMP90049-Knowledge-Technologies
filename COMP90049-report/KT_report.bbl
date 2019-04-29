@@ -1,0 +1,27 @@
+\begin{thebibliography}{}
+
+\bibitem[\protect\citename{Baldwin \bgroup et al.\egroup }2015]{Bal+15}
+Timothy Baldwin, Marie-Catherine de~Marneffe, Bo~Han, Young-Bum Kim, Alan
+  Ritter, and Wei Xu.
+\newblock 2015.
+\newblock Shared tasks of the 2015 workshop on noisy user-generated text:
+  Twitter lexical normalization and named entity recognition.
+\newblock In {\em Proceedings of the Workshop on Noisy User-generated Text},
+  pages 126--135, Beijing, China.
+
+\bibitem[\protect\citename{Sproat \bgroup et al.\egroup
+  }2001]{sproat2001normalization}
+Richard Sproat, Alan~W Black, Stanley Chen, Shankar Kumar, Mari Ostendorf, and
+  Christopher Richards.
+\newblock 2001.
+\newblock Normalization of non-standard words.
+\newblock {\em Computer speech \& language}, 15(3):287--333.
+
+\bibitem[\protect\citename{Xue \bgroup et al.\egroup }2011]{xue2011normalizing}
+Zhenzhen Xue, Dawei Yin, and Brian~D Davison.
+\newblock 2011.
+\newblock Normalizing microtext.
+\newblock In {\em Workshops at the Twenty-Fifth AAAI Conference on Artificial
+  Intelligence}.
+
+\end{thebibliography}

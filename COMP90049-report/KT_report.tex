@@ -1,0 +1,231 @@
+\documentclass[11pt]{article}
+\usepackage{colacl}
+\usepackage{amsmath}
+\sloppy
+
+\title{COMP90049 Knowledge Technologies Project 1
+\\ \Large \textit{Lexical Normalisation of Tweets}}
+\author{Anonymous} 
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+Twitter is an online social networking service where users post and interact with messages named as "tweets"\footnote{https://en.wikipedia.org/wiki/Twitter}. Sometimes tweets are formatted in an informal way with many abbreviations, typos and misspelt words. 
+\\This project aims to reformat this kind of words in tweets data by predicting best matches words for each of the input tokens 'misspell.txt' according to a dictionary to gain knowledge from evaluations. Some approximate search methods like GED and Soundex are used in this project. 
+\section{Related Work}
+\newcite{sproat2001normalization} points that texts from SMS and 'tweets' contain more non-standard words comparing with formal writing. 
+\newcite{xue2011normalizing} works on Noisy Channel Model and spelling correction in text normalisation.
+\newcite{Bal+15} points that correction candidates based on morphophonemic similarity.
+\section{Dataset}
+The dataset used for this project is from \newcite{Bal+15} which contains 10322 words from tweets and some of them may be misspelt.
+Other used datasets are a dictionary named 'dict.txt' which holds 370099 words and a file named 'correct.txt' which holds correct spelt words for analysis. 
+\\ \newcite{Bal+15} points that only "OOV" words are considered for normalisation. After analysis of the input tokens with exact string search, it can be divided into three parts (Table \ref{table_1}).
+\begin{table}[h]
+    \begin{center}
+        \begin{tabular}{|c|c|}
+            \hline
+            Parts & Numbers of words \\ \hline
+            In the dictionary & 8376 \\ \hline
+            Not in the dictionary & 1632 \\ \hline
+            Includes typos & 314 \\ \hline
+        \end{tabular}
+        \caption{Three parts of the tokens}\label{table_1}
+    \end{center}
+\end{table}
+\\The first part includes all words which can be exactly found in the dictionary. In this situation, they can be considered as the best predictions of themselves, due to that they are highly probably words spelt correctly. 
+\\The second part includes all words composed of letters but not exist in the dictionary directly. These tokens are probably misspelt and will be processed with approximate string search methods to find the best predictions.
+\\The last part includes all words contains special symbols or numbers due to the reason that there is no symbols or numbers in the dictionary. Tokens in this part are difficult to modify according to the dictionary. They will be treated as the best predictions of themselves temporarily.
+\\Part 1 and Part 3 will be considered as 'direct predictions' in this project.
+\section{Methodologies}
+Start with a basic GED algorithm then looking for some changes on GED. Combine with a phonetic matching at the end.
+\subsection{Global Edit Distance (GED)}
+In this project, NEEDLEMAN-WUNSH Algorithm is used to calculate GED. It measures with two strings and returns the minimum number of operations to transform from one string to another. The program begins with parameters $[m,i,d,r] = [+1,-1,-1,-1]$, and returns the word which meets the max number of GED while searching in the dictionary for each word in the queries.
+\subsection{GED with changes}
+Two changes including catching more than one result when calculating GED and changing the parameters implement here on the foundation of basic GED.
+\subsubsection{Return mutiple words}
+The number of words which reach the max GED in the dictionary may be more than one while traversing the queries. It may increase the recall by returning all these words instead of returning one, due to that these words are all highly correlated to the input.
+\subsubsection{Change the parameters}
+Based on multiple words returned, the parameters used in the algorithm can be changed to adjust the weights of different operations. 
+Samples: 
+$$[m,i,d,r] = [+2,-1,-1,-1]$$
+$$[m,i,d,r] = [+1,-2,-1,-1]$$
+$$[m,i,d,r] = [+1,-1,-2,-1]$$
+$$[m,i,d,r] = [+1,-1,-1,-2]$$
+\subsection{Soundex}
+"Tweets" usually contains some words come from euphony, which means some words are different in spelling but same in pronunciations. Phonetic matching methods may help in this situation. Soundex matching method is used here to test (see Table \ref{table1}).
+\begin{table}[h]
+    \begin{center}
+        \begin{tabular}{|c|c|}
+            \hline
+            b, f, p, v & 1 \\ \hline
+            c, g, j, k, q, s, x, z& 2 \\ \hline
+            d, t & 3 \\ \hline
+            l & 4 \\ \hline
+            m, n & 5 \\ \hline
+            r & 6 \\ \hline
+        \end{tabular}
+        \caption{Soundex}\label{table1}
+    \end{center}
+\end{table}
+
+\section{Evaluation}
+\subsection{Metrics}
+Two different analysis metrics are applied to evaluate the results. 
+\subsubsection{Accuracy}
+Accuracy represents the proportion of matched words in all correct words. It is used in the evaluation of the result of basic GED due to that the length of the returned list is corresponding to the input. 
+$$Accuracy = \frac{Matched\ number}{Total\ number\ of\ input}$$
+\subsubsection{Precision and Recall}
+Precision and Recall represent the result when one input word receives multiple results returned. Recall means the proportion of matched words within the relevant results. Precision means the percentage of matched words within all possible predictions.
+$$Recall = \frac{Matched\ number}{Total\ number\ of\ relevant\ results}$$
+$$Precision = \frac{Matched\ number}{Total\ number\ of\ predictions}$$
+\subsection{Direct predictions}
+For the first and the last parts in the tokens, they are treated as the best predictions for themselves at the beginning. The result of matches needs to be verified with a one-to-one comparison with the 'correct.txt'.\\
+\subsubsection{Results}
+Table \ref{table3} represents the evaluations for direct predictions parts.
+\begin{table}[h]
+    \begin{center}
+        \begin{tabular}{|c|c|c|}
+            \hline
+            Parts & Matches & Accuracy \\ \hline
+            In the dictionary & $7805 / 8376$ & $93.18\%$ \\ \hline
+            Includes typos & $299 / 314$ & $95.22\%$ \\ \hline
+            Summary & $8104 / 8690$ & $93.26\%$ \\ \hline
+        \end{tabular}
+        \caption{Results of direct predictions}\label{table3}
+    \end{center}
+\end{table} 
+
+Table \ref{table_4} and \ref{table_5} are some samples from words which are not matched.\\
+\begin{table}[h]
+    \begin{center}
+        \begin{tabular}{|c|c|}
+            \hline
+            Mis-matched Tokens & Correct \\ \hline
+            u & you \\ \hline
+            didnt & didn't \\ \hline
+            cause & because \\ \hline
+        \end{tabular}
+        \caption{Samples from parts1}\label{table_4}
+    \end{center}
+\end{table}
+\begin{table}[h]
+    \begin{center}
+        \begin{tabular}{|c|c|}
+            \hline
+            Mis-matched Tokens & Correct \\ \hline
+            2 & to \\ \hline
+            sum1 & someone \\ \hline
+            str8 & straight \\ \hline
+        \end{tabular}
+        \caption{Samples from parts3}\label{table_5}
+    \end{center}
+\end{table}
+
+\subsubsection{Analysis}
+Most predictions in this part match whole, while there are still some miss. Due to the result, it can be generalized that some words can be with the right spelling but wrong meaning like 'cause' and 'because' (Table \ref{table_4}). Some abbreviations and euphony cannot be predicted because the dictionary does not include special symbols and numbers (Table \ref{table_5}).
+\subsection{Basic GED}
+\subsubsection{Results}
+Table \ref{table_6} represents results of basic GED with single prediction. And Table \ref{table_7} shows failed samples from basic GED.\\
+\begin{table}[h]
+    \begin{center}
+        \begin{tabular}{|c|c|}
+            \hline
+            Matched / Total & $99/1632$ \\ \hline
+            Accuracy & $6.07\%$
+            \\ \hline
+        \end{tabular}
+        \caption{Results of basic GED}\label{table_6}
+    \end{center}
+\end{table}
+
+\begin{table}[h]
+    \begin{center}
+        \begin{tabular}{|c|c|c|}
+            \hline
+            Tokens & Correct & Returned \\ \hline
+            brah & brother & brach \\ \hline
+            mesage & message & mesange \\ \hline
+            cosplaying & cosplaying & complying \\ \hline
+        \end{tabular}
+        \caption{Samples from basic GED}\label{table_7}
+    \end{center}
+\end{table}
+\subsubsection{Analysis}
+According to the results, the mismatch data constitutes two forms. Some words like 'brah' which is spelt wrong and returned with 'brach' when 'brother' is expected. This should be improved with multiple returns. Others like 'cosplaying' which is correct but returned with 'complying' because 'cosplaying ' is not in the dictionary. This kind of modern words or slang shows the limitation of the dictionary.
+\subsection{GED with changes}
+\subsubsection{Results}
+Table \ref{table_8} represents results with multiple predictions and mutative parameters. \\
+\begin{table}[h]
+    \begin{center}
+        \begin{tabular}{|c|c|c|c|}
+            \hline
+            $[m, i, d, r]$ & Match &Precision & Recall \\ \hline
+            $[+1,-1,-1,-1]$ & 150 & $2.03\%$ & $9.19\%$ \\ \hline
+            $[+2,-1,-1,-1]$ & 143 & $2.79\%$ & $8.76\%$ \\ \hline
+            $[+1,-2,-1,-1]$ & 134 & $1.97\%$ & $8.21\%$ \\ \hline
+            $[+1,-1,-2,-1]$ & 182 & $0.93\%$ & $11.15\%$ \\ \hline
+            $[+1,-1,-1,-2]$ & 145 & $2.96\%$ & $8.88\%$ \\ \hline
+        \end{tabular}
+        % \\Table: Results of GED with changes
+        \caption{Results of GED with changes}\label{table_8}
+    \end{center}
+% \end{table}
+Table \ref{table_9} and \ref{table_10} represents some samples.\\
+% \begin{table}[h]
+    \begin{center}
+        \begin{tabular}{|c|c|p{2cm}|}
+            \hline
+            Tokens & Correct & Returned \\ \hline
+            mesage & message & mesange, mesnage, message\\ \hline
+            opolo & opolo & ovolo, polo      \\ \hline
+        \end{tabular}
+        \caption{Samples of GED with multiple returns}\label{table_9}
+    \end{center}
+% \end{table}
+
+% \begin{table}[h]
+    \begin{center}
+        \begin{tabular}{|c|c|p{2cm}|p{2cm}|}
+            \hline
+            Tokens & Correct & [1,-1,-1,-1] & [1,-1,-2,-1] \\ \hline
+            spirite & spirited & spirited, spiriter & spilite, spirate, spirit, spirited, spiriter, spirity, spirits, sprite\\ \hline
+          
+        \end{tabular}
+        \caption{Samples of GED with parameters changes}\label{table_10}
+    \end{center}
+\end{table}
+
+\subsubsection{Analysis}
+Firstly, return with multiple predictions will match more words and increase the Recall. Some sample words show above like 'mesage' in the misspell.txt will just return with 'mesange' with basic GED. But with multiple returns, it will return three results to match the correct word.
+Though, some words like 'opolo' still cannot be corrected because it do not exist in the dictionary.
+\\ Additionally, the Recall will increase a little when the parameters change. It means the weights of different operations are changing and the program will receive more or less returns to evaluate.
+It may refer to that people are used to use abbreviations while typing online. So that more situations of misspelt are caused by lack of letters rather than wrong letters.
+\\However, these changes still cannot match most of the words because some of them are not in the dictionary.
+\subsection{GED with Soundex}
+
+\subsubsection{Results}
+Table \ref{table_11} represents results with GED + Soundex.\\
+\begin{table}[h]
+    \begin{center}
+        \begin{tabular}{|c|c|c|}
+            \hline
+            Matches & Precision & Recall \\ \hline
+            $148/1632$ & very tiny & $9.07\%$ \\ \hline
+        \end{tabular}
+        \caption{Results of GED with Soundex}\label{table_11}
+    \end{center}
+\end{table}
+
+\subsubsection{Analysis}
+According to the results, the Recall reduces instead of increasing and the program returns so many lead to the precision becomes very tiny.
+\\ Combining Soundex with GED does not help the matching, because the limitation is not on the method used to do approximate string search. The limitation is on the dictionary.
+\section{Conclusion} 
+In conclusion, the best matches for this project should be $8286 / 10322$ where the Recall is $80.28\%$. Some changes made on the search method may affect the results a little but it is difficult to increase the Recall to a higher level.
+\\All of these approximate search methods are based on the given dictionary which does not contain any symbols, euphony and abbreviations. According to that, the limitation of the success rate for this project is on the dictionary rather than the methods.
+Maybe importing with a dictionary contains slang will increase the matching rate.
+
+\bibliographystyle{acl}
+\bibliography{sample}
+
+\end{document}
